@@ -14,12 +14,6 @@ class Player < ActiveRecord::Base
         puts "The top card is currently the #{card[0]["value"]} of #{card[0]["suit"].downcase}. "
     end
 
-    def draw_a_card(game)
-        game.draw_card(self)
-        puts "You drew a #{player_hand(game).last["value"].downcase} of #{player_hand(game).last["suit"].downcase}. "
-        puts "Its play code is #{player_hand(game).last["code"]}."
-    end
-
     def play_card(deck_id)
         puts "Enter the play code of the card you would like to play: "
         card_code = gets.strip.upcase

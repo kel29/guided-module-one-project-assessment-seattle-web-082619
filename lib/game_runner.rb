@@ -3,6 +3,7 @@ class GameRunner
     def initialize
         @player = nil
         @deck_id = nil
+        @game = nil
     end
 
     def welcome
@@ -27,11 +28,11 @@ class GameRunner
                 until game_over?
                     choice = turn_options
                     if choice == 1
-                        @player.view_hand(@deck_id)
+                        @player.view_hand(@game.deck_id)
                     elsif choice == 2
-                        @player.view_top_card(@deck_id)
+                        @player.view_top_card(@game.deck_id)
                     elsif choice == 3
-                        @player.draw_a_card #needs work
+                        @game.draw_card(player_id: @player.id, deck_id: @game.deck_id) #needs work)
                     elsif choice == 4
                         @player.play_card #needs work
                     else
@@ -63,15 +64,16 @@ class GameRunner
     end
 
     def set_up
-        game = CrazyEightGame.create(player_id: @player.id)
-        game.new_deck
-        @deck_id = game.deck_id
-        game.deal_start_hand(player_id: @player.id, deck_id: @deck_id)
-        game.place_start_card
+        @game = CrazyEightGame.create(player_id: @player.id)
+        @game.new_deck
+        # @deck_id = game.deck_id
+        # binding.pry
+        @game.deal_start_hand(player_id: @player.id, deck_id: @game.deck_id)
+        @game.place_start_card
     end
 
     def game_over?
-        @player.player_hand(@deck_id).length == 0
+        @player.player_hand(@game.deck_id).length == 0
     end
 
     def turn_options

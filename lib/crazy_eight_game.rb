@@ -14,12 +14,12 @@ class CrazyEightGame < ActiveRecord::Base
         @deck_id
     end
 
-    def deal_start_hand(player)
+    def deal_start_hand(player_id)
         puts "Dealing the start hand..."
         start_hand_response = RestClient.get("https://deckofcardsapi.com/api/deck/#{self.deck_id}/draw/?count=7")
         start_hand_hash = JSON.parse(start_hand_response)
         start_hand_hash["cards"].each do |c| 
-            Hand.create(location: player[:player_id], deck_id: self.deck_id, suit: c["suit"], value: c["value"], code: c["code"])
+            Hand.create(location: player_id[:player_id], deck_id: self.deck_id, suit: c["suit"], value: c["value"], code: c["code"])
         end
     end
 
@@ -33,11 +33,12 @@ class CrazyEightGame < ActiveRecord::Base
     end
 
 
-    def draw_card(player)
+    def draw_card(player_id)
         new_card_response = RestClient.get("https://deckofcardsapi.com/api/deck/#{self.deck_id}/draw/?count=1")
         new_card_hash = JSON.parse(new_card_response)["cards"][0]
-        new_card = Hand.create(location: player[:player_id], deck_id: self.deck_id, suit: new_card_hash["suit"], value: new_card_hash["value"], code: new_card_hash["code"])
+        new_card = Hand.create(location: player_id[:player_id], deck_id: self.deck_id, suit: new_card_hash["suit"], value: new_card_hash["value"], code: new_card_hash["code"])
         puts "You drew a #{new_card["value"].downcase} of #{new_card["suit"].downcase}."
+        puts "Its play code is #{new_card["code"]}."
         new_card
     end
 
