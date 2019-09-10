@@ -21,23 +21,11 @@ class GameRunner
     def game_options
         game_is_running = true
         while game_is_running
-            puts
-            puts "To start a game, press '1'"
-            puts "To view the rules, press '2'"
-            puts "To exit, press '3'"
-            puts
-            input = gets.chomp.strip.to_i
+            input = home_menu
             if input == 1
                 set_up
                 until game_over?
-                    puts "It's your turn! What would you like to do?"
-                    puts
-                    puts "To view your hand, press '1'"
-                    puts "To view the top play card, press '2'"
-                    puts "To draw a card, press '3'"
-                    puts "To play a card, press '4'"
-                    puts
-                    choice = gets.strip.to_i
+                    choice = turn_options
                     if choice == 1
                         @player.view_hand(@deck_id)
                     elsif choice == 2
@@ -47,7 +35,7 @@ class GameRunner
                     elsif choice == 4
                         @player.play_card #needs work
                     else
-                        puts "Mmm, I'm getting mixed signals. Can you try making a "
+                        puts "Hmm, I'm getting mixed signals. Can you try making a "
                         puts "selection again? Just enter 1, 2, 3 or 4 please."
                     end
                 end
@@ -62,6 +50,16 @@ class GameRunner
                 puts "selection again? Just enter 1, 2, or 3 please."
             end
         end
+    end
+
+    def home_menu
+        puts
+        puts "To start a game, press '1'"
+        puts "To view the rules, press '2'"
+        puts "To exit, press '3'"
+        puts
+        input = gets.chomp.strip.to_i
+        input 
     end
 
     def set_up
