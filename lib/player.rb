@@ -1,6 +1,7 @@
 class Player < ActiveRecord::Base
 
     def player_hand(deck_id) #working
+        # binding.pry
         Hand.where("location = ? AND deck_id = ?", self.id.to_s, deck_id)
     end
 
@@ -16,23 +17,28 @@ class Player < ActiveRecord::Base
 
     def play_card(deck_id)
         puts "Enter the play code of the card you would like to play: "
-        card_code = gets.strip.upcase
-        until card_in_hand?(card_code) 
-            puts
-            puts "Looks like that card is not in your hand."
-            puts "As a quick refresher, here is your hand:"
-            view_hand
-            puts
-            puts "Select a card by their play code to play."
-            card_code = gets.strip.upcase
-        end
-        move_card_from_hand_to_pile(card_code)
+        card_code = STDIN.gets.strip.upcase
+        card_not_in_hand_error_loop(deck_id, card_code)
+        # move_card_from_hand_to_pile(card_code)
         puts "You've successfully played a card."
     end
 
-    def card_in_hand?(card_code)
-        player_hand.find { |c| c[:code] == card_code }
+    def card_in_hand?(deck_id, card_code)
+        player_hand(deck_id).find { |c| c.code == card_code }
     end
+
+    def card_not_in_hand_error_loop(deck_id, card_code)
+        until card_in_hand?(deck_id, card_code)
+            puts
+            puts "Looks like that card is not in your hand."
+            puts "As a quick refresher, here is your hand:"
+            view_hand(deck_id)
+            puts
+            puts "Select a card by their play code to play."
+            card_code = STDIN.gets.strip.upcase
+        end
+    end
+
 
     def move_card_from_hand_to_pile(card_code)
         forget_top_card

@@ -2,7 +2,6 @@ class GameRunner
 
     def initialize
         @player = nil
-        @deck_id = nil
         @game = nil
     end
 
@@ -32,9 +31,9 @@ class GameRunner
                     elsif choice == 2
                         @player.view_top_card(@game.deck_id)
                     elsif choice == 3
-                        @game.draw_card(player_id: @player.id, deck_id: @game.deck_id) #needs work)
+                        @game.draw_card(player_id: @player.id, deck_id: @game.deck_id)
                     elsif choice == 4
-                        @player.play_card #needs work
+                        @player.play_card(@game.deck_id) #needs work
                     else
                         puts "Hmm, I'm getting mixed signals. Can you try making a "
                         puts "selection again? Just enter 1, 2, 3 or 4 please."
@@ -59,15 +58,13 @@ class GameRunner
         puts "To view the rules, press '2'"
         puts "To exit, press '3'"
         puts
-        input = gets.chomp.strip.to_i
+        input = STDIN.gets.chomp.strip.to_i
         input 
     end
 
     def set_up
         @game = CrazyEightGame.create(player_id: @player.id)
         @game.new_deck
-        # @deck_id = game.deck_id
-        # binding.pry
         @game.deal_start_hand(player_id: @player.id, deck_id: @game.deck_id)
         @game.place_start_card
     end
@@ -84,7 +81,7 @@ class GameRunner
         puts "To draw a card, press '3'"
         puts "To play a card, press '4'"
         puts
-        choice = gets.strip.to_i
+        choice = STDIN.gets.strip.to_i
         choice
     end
 
