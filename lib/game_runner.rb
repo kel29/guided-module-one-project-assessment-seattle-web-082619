@@ -41,7 +41,7 @@ class GameRunner
                         puts "selection again? Just enter 1, 2, 3, 4 or 5 please."
                     end
                 end
-                # winner?
+                winner
             elsif input == "2"
                 rules
             elsif input == "3"
@@ -88,12 +88,12 @@ class GameRunner
         choice
     end
 
-    def winner?
-        # if <<remaining-deck>> > 0
-        #   puts "Nice job, you won!"
-        # else 
-        #   puts "Good effort!"
-        # end
+    def winner
+        if @game.remaining > 0
+          puts "Nice job, you won!"
+        else 
+          puts "Good effort!"
+        end
     end
 
     def rules

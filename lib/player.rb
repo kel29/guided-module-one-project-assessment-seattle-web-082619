@@ -2,7 +2,7 @@ class Player < ActiveRecord::Base
 
     def player_hand(deck_id) #working
         # binding.pry
-        Hand.where("location = ? AND deck_id = ?", self.id.to_s, deck_id).order(:value, :suit)
+        Hand.where("location = ? AND deck_id = ?", self.id.to_s, deck_id).order(:suit, :value)
     end
 
     def view_hand(deck_id) #working

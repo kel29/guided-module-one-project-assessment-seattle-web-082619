@@ -11,7 +11,7 @@ class CrazyEightGame < ActiveRecord::Base
         new_deck_hash = JSON.parse(new_deck_response)
         self.deck_id = new_deck_hash["deck_id"]
         self.save
-        @deck_id
+        # @deck_id
     end
 
     def deal_start_hand(player_id)
@@ -35,10 +35,16 @@ class CrazyEightGame < ActiveRecord::Base
 
     def draw_card(player_id)
         new_card_response = RestClient.get("https://deckofcardsapi.com/api/deck/#{self.deck_id}/draw/?count=1")
-        new_card_hash = JSON.parse(new_card_response)["cards"][0]
-        new_card = Hand.create(location: player_id[:player_id], deck_id: self.deck_id, suit: new_card_hash["suit"], value: new_card_hash["value"], code: new_card_hash["code"])
+        new_card_hash = JSON.parse(new_card_response)
+        new_card = Hand.create(location: player_id[:player_id], deck_id: self.deck_id, suit: new_card_hash["cards"][0]["suit"], value: new_card_hash["cards"][0]["value"], code: new_card_hash["cards"][0]["code"])
         puts "You drew a #{new_card["value"].downcase} of #{new_card["suit"].downcase}. Its play code is #{new_card["code"]}."
+        self.remaining = new_card_hash["remaining"]
+        self.save
+        puts "There are #{self.remaining} cards left in the deck."
         new_card
     end
 
+    # def check_remaining_card_count
+    #     self.remaining
+    # end
 end
