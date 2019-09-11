@@ -19,34 +19,18 @@ class GameRunner
     end
 
     def game_options
-        game_is_running = true
-        while game_is_running
+        user_is_active = true
+        while user_is_active
             input = home_menu
-            if input == "1"
+            if input == '1'
                 set_up
-                until game_over?
-                    choice = turn_options
-                    if choice == "1"
-                        @player.view_hand(@game.deck_id)
-                    elsif choice == "2"
-                        @player.view_top_card(@game.deck_id)
-                    elsif choice == "3"
-                        @game.draw_card(player_id: @player.id, deck_id: @game.deck_id)
-                    elsif choice == "4"
-                        @player.play_card(@game.deck_id) #needs work
-                    elsif choice == "5"
-                        rules
-                    else
-                        puts "Hmm, I'm getting mixed signals. Can you try making a "
-                        puts "selection again? Just enter 1, 2, 3, 4 or 5 please."
-                    end
-                end
-                winner
+                play_crazy_eights
+                check_for_winner
             elsif input == "2"
                 rules
             elsif input == "3"
                 puts "Goodbye!"
-                game_is_running = false
+                user_is_active = false
             else
                 puts "Mmm, I'm getting mixed signals. Can you try making a "
                 puts "selection again? Just enter 1, 2, or 3 please."
@@ -56,7 +40,7 @@ class GameRunner
 
     def home_menu
         puts
-        puts "To start a game, [enter] '1'"
+        puts "To start a new game, [enter] '1'"
         puts "To view the rules, [enter] '2'"
         puts "To exit, [enter] '3'"
         puts
@@ -72,7 +56,29 @@ class GameRunner
     end
 
     def game_over?
-        @player.player_hand(@game.deck_id).length == 0
+        @player.player_hand(@game.deck_id).length.zero?
+    end
+
+    def play_crazy_eights
+        until game_over?
+            choice = turn_options
+            if choice == '1'
+                @player.view_hand(@game.deck_id)
+            elsif choice == '2'
+                @player.view_top_card(@game.deck_id)
+            elsif choice == '3'
+                @game.draw_card(player_id: @player.id, deck_id: @game.deck_id)
+            elsif choice == '4'
+                @player.play_card(@game.deck_id)
+            elsif choice == '5'
+                rules
+            elsif choice == '6'
+                @player.exit_game_and_delete_deck(@game)
+            else
+                puts "Hmm, I'm getting mixed signals. Can you try making a "
+                puts "selection again? Just enter 1, 2, 3, 4, 5 or 6 please."
+            end
+        end
     end
 
     def turn_options
@@ -83,17 +89,14 @@ class GameRunner
         puts "To draw a card, [enter] '3'"
         puts "To play a card, [enter] '4'"
         puts "To review the rules, [enter] '5'"
+        puts "To exit and end this game, [enter] '6'"
         puts
         choice = STDIN.gets.strip
         choice
     end
 
-    def winner
-        if @game.remaining > 0
-          puts "Nice job, you won!"
-        else 
-          puts "Good effort!"
-        end
+    def check_for_winner
+        puts "Nice job, you won!" if @game.nil? && @game.remaining > 0
     end
 
     def rules
