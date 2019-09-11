@@ -31,16 +31,10 @@ class Player < ActiveRecord::Base
         if play_card.nil?
             puts 'Looks like that is not a valid card code or that card is not in your hand.'
         elsif play_card.value == '8'
-            puts 'Eights are wild! What suit would you like to switch to?'
-            suit = STDIN.gets.strip.upcase
-            until suit == 'HEARTS' || suit == 'SPADES' || suit == 'CLUBS' || suit == 'DIAMONDS'
-                puts "Mmm, doesn't look like you entered a valid suit. "
-                puts "Please [enter] 'spades', 'clubs', 'hearts', or 'diamonds'."
-                suit = STDIN.gets.strip.upcase
-            end
+            suit = eights_are_wild
             move_card_from_hand_to_pile(deck_id, card_code)
             Hand.forget_top_card(deck_id)
-            Hand.create(location: 'top', deck_id: deck_id, suit: suit)
+            Hand.create('location = ?, deck_id = ?, suit = ?', 'top', deck_id, suit)
         elsif top.suit == play_card.suit || top.value == play_card.value
             move_card_from_hand_to_pile(deck_id, card_code)
             puts "You've successfully played your card."
@@ -48,6 +42,18 @@ class Player < ActiveRecord::Base
             puts "Looks like that's not a valid card to play. Remember that either the card "
             puts "number or suit needs to match the card on the top of the discard pile."
         end
+    end
+
+    def eights_are_wild
+        puts 'Eights are wild! What suit would you like to switch to?'
+        suit = STDIN.gets.strip.upcase
+        until ['HEARTS', 'SPADES', 'CLUBS', 'DIAMONDS'].include?(suit)
+            puts "Mmm, doesn't look like you entered a valid suit. "
+            puts "Please [enter] 'spades', 'clubs', 'hearts', or 'diamonds'."
+            suit = STDIN.gets.strip.upcase
+            
+        end
+        suit
     end
 
     def move_card_from_hand_to_pile(deck_id, card_code)
