@@ -8,13 +8,13 @@ class GameRunner
     def welcome
         puts "Let's play Crazy Eights! Enter your username: "
         name = STDIN.gets.strip.downcase.capitalize
-        player = Player.find_by(username: name)
+        player = Player.find_by username: name
         if player.nil?
             @player = Player.create(username: name)
-            puts "Welcome, new player #{player.username}!"
+            puts "Welcome, new player #{name}!"
         else
             @player = player
-            puts "Welcome back #{player.username}!"
+            puts "Welcome back #{name}!"
         end
     end
 
