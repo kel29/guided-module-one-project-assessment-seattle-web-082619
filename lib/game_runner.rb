@@ -22,17 +22,17 @@ class GameRunner
         game_is_running = true
         while game_is_running
             input = home_menu
-            if input == 1
+            if input == "1"
                 set_up
                 until game_over?
                     choice = turn_options
-                    if choice == 1
+                    if choice == "1"
                         @player.view_hand(@game.deck_id)
-                    elsif choice == 2
+                    elsif choice == "2"
                         @player.view_top_card(@game.deck_id)
-                    elsif choice == 3
+                    elsif choice == "3"
                         @game.draw_card(player_id: @player.id, deck_id: @game.deck_id)
-                    elsif choice == 4
+                    elsif choice == "4"
                         @player.play_card(@game.deck_id) #needs work
                     else
                         puts "Hmm, I'm getting mixed signals. Can you try making a "
@@ -40,9 +40,9 @@ class GameRunner
                     end
                 end
                 # winner?
-            elsif input == 2
+            elsif input == "2"
                 rules
-            elsif input == 3
+            elsif input == "3"
                 puts "Goodbye!"
                 game_is_running = false
             else
@@ -58,7 +58,7 @@ class GameRunner
         puts "To view the rules, press '2'"
         puts "To exit, press '3'"
         puts
-        input = STDIN.gets.chomp.strip.to_i
+        input = STDIN.gets.chomp.strip
         input 
     end
 
@@ -81,7 +81,7 @@ class GameRunner
         puts "To draw a card, press '3'"
         puts "To play a card, press '4'"
         puts
-        choice = STDIN.gets.strip.to_i
+        choice = STDIN.gets.strip
         choice
     end
 
