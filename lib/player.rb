@@ -24,46 +24,51 @@ class Player < ActiveRecord::Base
         card_code = STDIN.gets.strip.upcase
         card_not_in_hand_error_loop(deck_id, card_code)
         validate_card_is_playable(deck_id, card_code)
-        # move_card_from_hand_to_pile(card_code)
+        move_card_from_hand_to_pile(deck_id, card_code)
         puts "You've successfully played a card."
     end
 
     def find_card_in_hand(deck_id, card_code)
-        card = player_hand(deck_id).find { |c| c.code == card_code }
-        card
+        player_hand(deck_id).find { |c| c.code == card_code }
     end
 
     def card_not_in_hand_error_loop(deck_id, card_code)
         until find_card_in_hand(deck_id, card_code)
             puts
-            puts "Looks like that card is not in your hand."
-            puts "As a quick refresher, here is your hand:"
+            puts "Looks like that is not a valid card code or that card is "
+            puts "not in your hand. As a quick refresher, here is your hand:"
             view_hand(deck_id)
             puts
-            puts "Select a card by their play code to play."
+            puts "Select a card to play by entering their play code:"
             card_code = STDIN.gets.strip.upcase
         end
     end
 
-    def validate_card_is_playable(deck_id, card_code)
+    def validate_card_is_playable(deck_id, card_code) #doesn't work if someone loops too many times
         top = find_top_card(deck_id)[0]
         play_card = find_card_in_hand(deck_id, card_code)
+        # binding.pry
         until top.suit == play_card.suit || top.value == play_card.value || play_card.value == "8"
             puts "Looks like that's not a valid card to play."
-            puts "Remember, either the card number or suit needs to "
-            puts "match the card on the top of the discard pile. "
+            # puts "First, you can only play cards that are in you hand. "
+            # view_hand(deck_id)
+            puts "Then, remember that either the card number or suit needs "
+            puts "to match the card on the top of the discard pile. "
             view_top_card(deck_id)
             puts "Please enter a valid card code: "
             card_code = STDIN.gets.strip.upcase
+            # binding.pry
             card_not_in_hand_error_loop(deck_id, card_code)
+            # binding.pry
             play_card = find_card_in_hand(deck_id, card_code)
         end
     end
 
-    def move_card_from_hand_to_pile(card_code)
-        forget_top_card
-        new_top = self.where(code: card_code)
-        new_top[:location] = "top"
+    def move_card_from_hand_to_pile(deck_id, card_code)
+        Hand.forget_top_card(deck_id)
+        new_top = find_card_in_hand(deck_id, card_code)
+        new_top.location = "top"
+        new_top.save
     end
 
 end
