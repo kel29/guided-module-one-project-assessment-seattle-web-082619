@@ -34,9 +34,11 @@ class GameRunner
                         @game.draw_card(player_id: @player.id, deck_id: @game.deck_id)
                     elsif choice == "4"
                         @player.play_card(@game.deck_id) #needs work
+                    elsif choice == "5"
+                        rules
                     else
                         puts "Hmm, I'm getting mixed signals. Can you try making a "
-                        puts "selection again? Just enter 1, 2, 3 or 4 please."
+                        puts "selection again? Just enter 1, 2, 3, 4 or 5 please."
                     end
                 end
                 # winner?
@@ -80,6 +82,7 @@ class GameRunner
         puts "To view the top play card, [enter] '2'"
         puts "To draw a card, [enter] '3'"
         puts "To play a card, [enter] '4'"
+        puts "To review the rules, [enter] '5'"
         puts
         choice = STDIN.gets.strip
         choice
