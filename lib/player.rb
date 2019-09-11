@@ -1,11 +1,11 @@
 class Player < ActiveRecord::Base
 
     def player_hand(deck_id)
-        # binding.pry
         Hand.where('location = ? AND deck_id = ?', id.to_s, deck_id).order(:suit, :value)
     end
 
     def view_hand(deck_id)
+        puts
         puts "You have #{player_hand(deck_id).length} card(s) in your hand: "
         player_hand(deck_id).each { |i| puts "* #{i['value'].downcase} of #{i['suit'].downcase}; play code: #{i['code']}"}
     end
@@ -20,7 +20,13 @@ class Player < ActiveRecord::Base
 
     def view_top_card(deck_id)
         card = find_top_card(deck_id)[0]
-        puts "The top card is currently the #{card['value'].downcase} of #{card['suit'].downcase}. "
+        if card.value.nil?
+            puts
+            puts "A crazy eight was played! The suit in play is now #{card['suit'].downcase}."
+        else
+            puts
+            puts "The top card is currently the #{card['value'].downcase} of #{card['suit'].downcase}. "
+        end
     end
 
     def play_card(deck_id)
@@ -34,7 +40,7 @@ class Player < ActiveRecord::Base
             suit = eights_are_wild
             move_card_from_hand_to_pile(deck_id, card_code)
             Hand.forget_top_card(deck_id)
-            Hand.create('location = ?, deck_id = ?, suit = ?', 'top', deck_id, suit)
+            Hand.create(location: 'top', deck_id: deck_id, suit: suit)
         elsif top.suit == play_card.suit || top.value == play_card.value
             move_card_from_hand_to_pile(deck_id, card_code)
             puts "You've successfully played your card."
@@ -51,7 +57,6 @@ class Player < ActiveRecord::Base
             puts "Mmm, doesn't look like you entered a valid suit. "
             puts "Please [enter] 'spades', 'clubs', 'hearts', or 'diamonds'."
             suit = STDIN.gets.strip.upcase
-            
         end
         suit
     end

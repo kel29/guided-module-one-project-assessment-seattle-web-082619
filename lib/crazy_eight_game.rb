@@ -29,7 +29,6 @@ class CrazyEightGame < ActiveRecord::Base
         card_response = RestClient.get("https://deckofcardsapi.com/api/deck/#{deck_id}/draw/?count=1")
         card_hash = JSON.parse(card_response)['cards'][0]
         start = Hand.create(location: 'top', deck_id: deck_id, suit: card_hash['suit'], value: card_hash['value'], code: card_hash['code'])
-        puts "The first card in play is a #{start['value'].downcase} of #{start['suit'].downcase}."
         self.remaining = JSON.parse(card_response)['remaining']
         save
         start

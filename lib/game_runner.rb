@@ -61,7 +61,7 @@ class GameRunner
 
     def play_crazy_eights
         until game_over?
-            @player.view_hand(@game.deck_id)
+            @player.view_top_card(@game.deck_id)
             choice = turn_options
             if choice == '1'
                 @player.view_hand(@game.deck_id)
