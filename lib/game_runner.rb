@@ -54,9 +54,9 @@ class GameRunner
 
     def home_menu
         puts
-        puts "To start a game, press '1'"
-        puts "To view the rules, press '2'"
-        puts "To exit, press '3'"
+        puts "To start a game, [enter] '1'"
+        puts "To view the rules, [enter] '2'"
+        puts "To exit, [enter] '3'"
         puts
         input = STDIN.gets.chomp.strip
         input 
@@ -74,12 +74,12 @@ class GameRunner
     end
 
     def turn_options
-        puts "It's your turn! What would you like to do?"
+        puts "What would you like to do?"
         puts
-        puts "To view your hand, press '1'"
-        puts "To view the top play card, press '2'"
-        puts "To draw a card, press '3'"
-        puts "To play a card, press '4'"
+        puts "To view your hand, [enter] '1'"
+        puts "To view the top play card, [enter] '2'"
+        puts "To draw a card, [enter] '3'"
+        puts "To play a card, [enter] '4'"
         puts
         choice = STDIN.gets.strip
         choice
