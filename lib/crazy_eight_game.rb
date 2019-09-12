@@ -39,7 +39,7 @@ class CrazyEightGame < ActiveRecord::Base
             new_card_response = RestClient.get("https://deckofcardsapi.com/api/deck/#{deck_id}/draw/?count=1")
             new_card_hash = JSON.parse(new_card_response)['cards'][0]
             new_card = Hand.create(location: player_id[:player_id], deck_id: deck_id, suit: new_card_hash['suit'], value: new_card_hash['value'], code: new_card_hash['code'])
-            puts "You drew a #{new_card['value'].downcase} of #{new_card['suit'].downcase}. Its play code is #{new_card['code']}."
+            puts "You drew a #{new_card['value'].downcase} of #{new_card['suit'].downcase}. Its play code is #{new_card['code'].cyan}."
             update_remaining(JSON.parse(new_card_response)['remaining'])
             puts "There are #{remaining} cards left in the deck."
             new_card

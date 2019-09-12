@@ -27,11 +27,11 @@ class Player < ActiveRecord::Base
     end
 
     def find_top_card(deck_id)
-        Hand.where('location = ? AND deck_id = ?', 'top', deck_id)
+        Hand.where('location = ? AND deck_id = ?', 'top', deck_id)[0]
     end
 
     def view_top_card(deck_id)
-        card = find_top_card(deck_id)[0]
+        card = find_top_card(deck_id)
         suit = pretty_suits(card['suit'])
         if card.value.nil?
             puts
@@ -43,10 +43,10 @@ class Player < ActiveRecord::Base
     end
 
     def play_card(game, card_code)
-        top = find_top_card(game.deck_id)[0]
+        top = find_top_card(game.deck_id)
         play_card = find_card_in_hand(game.deck_id, card_code)
         if play_card.nil?
-            puts 'Looks like you are trying to play a card, except that '
+            puts 'Looks like you are trying to play a card, except what you entered '
             puts 'is not a valid card code or that card is not in your hand.'
         elsif play_card.value == '8'
             view_hand(game.deck_id)
@@ -91,7 +91,6 @@ class Player < ActiveRecord::Base
         case input
         when 'yes'
             Hand.where(deck_id: game.deck_id).destroy_all
-            game.destroy
         end
     end
 
