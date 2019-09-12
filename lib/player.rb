@@ -30,6 +30,7 @@ class Player < ActiveRecord::Base
     end
 
     def play_card(deck_id)
+        puts
         puts 'Enter the play code of the card you would like to play: '
         card_code = STDIN.gets.strip.upcase
         top = find_top_card(deck_id)[0]
