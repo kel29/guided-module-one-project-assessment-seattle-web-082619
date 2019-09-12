@@ -7,7 +7,20 @@ class Player < ActiveRecord::Base
     def view_hand(deck_id)
         puts
         puts "You have #{player_hand(deck_id).length} card(s) in your hand: "
-        player_hand(deck_id).each { |i| puts "* #{i['value'].downcase} of #{i['suit'].downcase}; play code: #{i['code']}"}
+        player_hand(deck_id).each do |i| 
+            suit = pretty_suits(i['suit'])
+            puts "* #{i['value'].downcase} of #{suit}; play code: #{i['code']}"
+        end
+    end
+
+    def pretty_suits(suit)
+        case suit
+        when 'SPADES' then pretty_suit = "♠".light_black
+        when 'DIAMONDS' then pretty_suit = "♦".red
+        when 'HEARTS' then pretty_suit = "♥".magenta
+        when 'CLUBS' then pretty_suit = "♣".green
+        end
+        pretty_suit
     end
 
     def find_card_in_hand(deck_id, card_code)
@@ -36,6 +49,7 @@ class Player < ActiveRecord::Base
             puts 'Looks like you are trying to play a card, except that '
             puts 'is not a valid card code or that card is not in your hand.'
         elsif play_card.value == '8'
+            view_hand(deck_id)
             suit = eights_are_wild
             move_card_from_hand_to_pile(deck_id, card_code)
             Hand.forget_top_card(deck_id)
@@ -50,6 +64,7 @@ class Player < ActiveRecord::Base
     end
 
     def eights_are_wild
+        puts
         puts 'Eights are wild! What suit would you like to switch to?'
         suit = STDIN.gets.strip.upcase
         until ['HEARTS', 'SPADES', 'CLUBS', 'DIAMONDS'].include?(suit)
@@ -57,6 +72,7 @@ class Player < ActiveRecord::Base
             puts "Please [enter] 'spades', 'clubs', 'hearts', or 'diamonds'."
             suit = STDIN.gets.strip.upcase
         end
+        puts `clear`
         suit
     end
 
