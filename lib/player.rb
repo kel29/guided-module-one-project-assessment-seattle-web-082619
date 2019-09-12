@@ -70,8 +70,14 @@ class Player < ActiveRecord::Base
     end
 
     def exit_game_and_delete_deck(game)
-        Hand.where(deck_id: game.deck_id).destroy_all
-        game.destroy
+        puts 'Are you sure you want to exit and end this game?'
+        puts "[enter] 'yes' to confirm."
+        input = STDIN.gets.strip.downcase
+        case input
+        when 'yes'
+            Hand.where(deck_id: game.deck_id).destroy_all
+            game.destroy
+        end
     end
 
 end
