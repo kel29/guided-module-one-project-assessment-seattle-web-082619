@@ -66,22 +66,13 @@ class GameRunner
         until game_over?
             @player.view_top_card(@game.deck_id)
             @player.view_hand(@game.deck_id)
-            choice = turn_options
+            choice = turn_options.upcase
             puts `clear`
             case choice
-            when '1'
-                @game.draw_card(player_id: @player.id, deck_id: @game.deck_id)
-            when '2'
-                @player.view_top_card(@game.deck_id)
-                @player.view_hand(@game.deck_id)
-                @player.play_card(@game.deck_id)
-            when '3'
-                rules
-            when '4'
-                @player.exit_game_and_delete_deck(@game)
-            else
-                puts "Hmm, I'm getting mixed signals. Can you try making a "
-                puts 'selection again? Just enter 1, 2, 3 or 4 please.'
+            when '1'then @game.draw_card(player_id: @player.id, deck_id: @game.deck_id)
+            when '2'then rules
+            when '3'then @player.exit_game_and_delete_deck(@game)
+            else @player.play_card(@game.deck_id, choice)
             end
         end
     end
@@ -90,10 +81,10 @@ class GameRunner
         puts
         puts 'What would you like to do?'
         puts
+        puts 'To play a card, [enter] the card code:'
         puts "To draw a card, [enter] '1'"
-        puts "To play a card, [enter] '2'"
-        puts "To review the rules, [enter] '3'"
-        puts "To exit and end this game, [enter] '4'"
+        puts "To review the rules, [enter] '2'"
+        puts "To exit and end this game, [enter] '3'"
         puts
         choice = STDIN.gets.strip
         choice

@@ -29,14 +29,12 @@ class Player < ActiveRecord::Base
         end
     end
 
-    def play_card(deck_id)
-        puts
-        puts 'Enter the play code of the card you would like to play: '
-        card_code = STDIN.gets.strip.upcase
+    def play_card(deck_id, card_code)
         top = find_top_card(deck_id)[0]
         play_card = find_card_in_hand(deck_id, card_code)
         if play_card.nil?
-            puts 'Looks like that is not a valid card code or that card is not in your hand.'
+            puts 'Looks like you are trying to play a card, except that '
+            puts 'is not a valid card code or that card is not in your hand.'
         elsif play_card.value == '8'
             suit = eights_are_wild
             move_card_from_hand_to_pile(deck_id, card_code)
