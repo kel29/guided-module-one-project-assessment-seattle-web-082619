@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_11_175923) do
+ActiveRecord::Schema.define(version: 2019_09_12_184607) do
 
   create_table "crazy_eight_games", force: :cascade do |t|
     t.text "deck_id"
     t.integer "player_id"
     t.integer "remaining"
+    t.integer "turn_count"
   end
 
   create_table "hands", force: :cascade do |t|
