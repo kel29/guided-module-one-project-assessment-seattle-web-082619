@@ -98,16 +98,17 @@ class GameRunner
     end
 
     def rules
-        puts 'The goal of the game is to get rid of all of your cards. '
-        puts 'Each turn you must play a card, and that card must be either '
-        puts 'the same suit or number as the card on the top of the play pile.'
-        puts "If you don't have a card in your hand that you can play, or you "
-        puts "don't want to play any of the cards in your hand, you can draw "
-        puts "from the top of the deck. There's one exception, though! Eights "
-        puts 'are wild. That means you can play an Eight at any time, and when '
-        puts "you do, you'll have the opportunity to choose a new suit for the "
-        puts 'next card laid. You win when you run out of cards, and you lose if '
+        puts 'The goal of the game is to get rid of all of your cards. Each'
+        puts 'turn you must play a card, and that card must be either the same '
+        puts 'suit or number as the card on the top of the play pile. If you '
+        puts "don't have a card in your hand that you can play, or you don't "
+        puts 'want to play any of the cards in your hand, you can draw from '
+        puts "the top of the deck. There's one exception, though! Eights are "
+        puts 'wild. That means you can play an Eight at any time, and when you '
+        puts "do, you'll have the opportunity to choose a new suit for the next"
+        puts 'card laid. You win when you run out of cards, and you lose if '
         puts 'you get to the end of the deck without playing all of your cards.'
+        puts
         puts 'Good luck!'
     end
 
