@@ -24,14 +24,14 @@ class GameRunner
         while user_is_active
             input = home_menu
             puts `clear`
-            if input == '1'
+            case input
+            when '1'
                 set_up
                 play_crazy_eights
                 check_for_winner
                 puts `clear`
-            elsif input == '2'
-                rules
-            elsif input == '3'
+            when '2' then rules
+            when '3'
                 puts 'Goodbye!'
                 user_is_active = false
             else
@@ -68,14 +68,11 @@ class GameRunner
             @player.view_hand(@game.deck_id)
             choice = turn_options
             puts `clear`
-            if choice == '1'
-                @game.draw_card(player_id: @player.id, deck_id: @game.deck_id)
-            elsif choice == '2'
-                @player.play_card(@game.deck_id)
-            elsif choice == '3'
-                rules
-            elsif choice == '4'
-                @player.exit_game_and_delete_deck(@game)
+            case choice
+            when '1' then @game.draw_card(player_id: @player.id, deck_id: @game.deck_id)
+            when '2' then @player.play_card(@game.deck_id)
+            when '3' then rules
+            when '4' then @player.exit_game_and_delete_deck(@game)
             else
                 puts "Hmm, I'm getting mixed signals. Can you try making a "
                 puts 'selection again? Just enter 1, 2, 3 or 4 please.'
