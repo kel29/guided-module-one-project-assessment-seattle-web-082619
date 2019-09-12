@@ -28,8 +28,8 @@ class GameRunner
             when '1'
                 set_up
                 play_crazy_eights
-                check_for_winner
                 puts `clear`
+                check_for_winner
             when '2' then rules
             when '3'
                 puts 'Goodbye!'
@@ -91,7 +91,7 @@ class GameRunner
     end
 
     def check_for_winner
-        puts 'Nice job, you won!' if @game.nil? && @game.remaining.positive?
+        puts 'Nice job, you won!' if @game.nil? != true && @game.remaining.positive?
     end
 
     def rules

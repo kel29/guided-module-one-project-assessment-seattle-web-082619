@@ -8,8 +8,7 @@ class Player < ActiveRecord::Base
         puts
         puts "You have #{player_hand(deck_id).length} card(s) in your hand: "
         player_hand(deck_id).each do |i| 
-            suit = pretty_suits(i['suit'])
-            puts "* #{i['value'].downcase} of #{suit}; play code: #{i['code']}"
+            puts "* #{i['value'].downcase} of #{pretty_suits(i['suit'])}; play code: #{i['code']}"
         end
     end
 
@@ -33,12 +32,13 @@ class Player < ActiveRecord::Base
 
     def view_top_card(deck_id)
         card = find_top_card(deck_id)[0]
+        suit = pretty_suits(card['suit'])
         if card.value.nil?
             puts
-            puts "A crazy eight was played! The suit in play is now #{card['suit'].downcase}."
+            puts "A crazy eight was played! The suit in play is now #{suit}."
         else
             puts
-            puts "The top card is currently the #{card['value'].downcase} of #{card['suit'].downcase}. "
+            puts "The top card is currently the #{card['value'].downcase} of #{suit}. "
         end
     end
 
