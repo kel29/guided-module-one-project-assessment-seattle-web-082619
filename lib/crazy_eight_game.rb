@@ -9,7 +9,7 @@ class CrazyEightGame < ActiveRecord::Base
         new_deck_response = RestClient.get("https://deckofcardsapi.com/api/deck/new/shuffle/")
         new_deck_hash = JSON.parse(new_deck_response)
         self.deck_id = new_deck_hash['deck_id']
-        self.remaining = new_deck_hash['remaining']
+        update_remaining(new_deck_hash['remaining'])
         save
     end
 
@@ -17,8 +17,7 @@ class CrazyEightGame < ActiveRecord::Base
         puts 'Dealing the start hand...'
         start_hand_response = RestClient.get("https://deckofcardsapi.com/api/deck/#{deck_id}/draw/?count=7")
         start_hand_hash = JSON.parse(start_hand_response)
-        self.remaining = start_hand_hash['remaining']
-        save
+        update_remaining(start_hand_hash['remaining'])
         start_hand_hash['cards'].each do |c| 
             Hand.create(location: player_id[:player_id], deck_id: deck_id, suit: c['suit'], value: c['value'], code: c['code'])
         end
@@ -29,8 +28,7 @@ class CrazyEightGame < ActiveRecord::Base
         card_response = RestClient.get("https://deckofcardsapi.com/api/deck/#{deck_id}/draw/?count=1")
         card_hash = JSON.parse(card_response)['cards'][0]
         start = Hand.create(location: 'top', deck_id: deck_id, suit: card_hash['suit'], value: card_hash['value'], code: card_hash['code'])
-        self.remaining = JSON.parse(card_response)['remaining']
-        save
+        update_remaining(JSON.parse(card_response)['remaining'])
         start
     end
 
@@ -42,11 +40,20 @@ class CrazyEightGame < ActiveRecord::Base
             new_card_hash = JSON.parse(new_card_response)['cards'][0]
             new_card = Hand.create(location: player_id[:player_id], deck_id: deck_id, suit: new_card_hash['suit'], value: new_card_hash['value'], code: new_card_hash['code'])
             puts "You drew a #{new_card['value'].downcase} of #{new_card['suit'].downcase}. Its play code is #{new_card['code']}."
-            self.remaining = JSON.parse(new_card_response)['remaining']
-            save
+            update_remaining(JSON.parse(new_card_response)['remaining'])
             puts "There are #{remaining} cards left in the deck."
             new_card
         end
+    end
+
+    def turn_tracker
+        self.turn_count += 1
+        save
+    end
+
+    def update_remaining(new_remainder)
+        self.remaining = new_remainder
+        save
     end
 
 end
