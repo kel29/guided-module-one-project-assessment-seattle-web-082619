@@ -8,7 +8,7 @@ class Player < ActiveRecord::Base
         puts
         puts "You have #{player_hand(deck_id).length} card(s) in your hand: "
         player_hand(deck_id).each do |i| 
-            puts "* #{i['value'].downcase} of #{pretty_suits(i['suit'])}; play code: #{i['code']}"
+            puts "* #{i['value'].downcase} of #{pretty_suits(i['suit'])}; play code: #{i['code'].cyan}"
         end
     end
 
@@ -42,21 +42,22 @@ class Player < ActiveRecord::Base
         end
     end
 
-    def play_card(deck_id, card_code)
-        top = find_top_card(deck_id)[0]
-        play_card = find_card_in_hand(deck_id, card_code)
+    def play_card(game, card_code)
+        top = find_top_card(game.deck_id)[0]
+        play_card = find_card_in_hand(game.deck_id, card_code)
         if play_card.nil?
             puts 'Looks like you are trying to play a card, except that '
             puts 'is not a valid card code or that card is not in your hand.'
         elsif play_card.value == '8'
-            view_hand(deck_id)
+            view_hand(game.deck_id)
             suit = eights_are_wild
-            move_card_from_hand_to_pile(deck_id, card_code)
-            Hand.forget_top_card(deck_id)
-            Hand.create(location: 'top', deck_id: deck_id, suit: suit)
+            move_card_from_hand_to_pile(game.deck_id, card_code)
+            Hand.forget_top_card(game.deck_id)
+            Hand.create(location: 'top', deck_id: game.deck_id, suit: suit)
+            game.turn_tracker
         elsif top.suit == play_card.suit || top.value == play_card.value
-            move_card_from_hand_to_pile(deck_id, card_code)
-            puts "You've successfully played your card."
+            move_card_from_hand_to_pile(game.deck_id, card_code)
+            game.turn_tracker
         else
             puts "Looks like that's not a valid card to play. Remember that either the card "
             puts "number or suit needs to match the card on the top of the discard pile."

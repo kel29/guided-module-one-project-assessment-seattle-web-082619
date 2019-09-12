@@ -52,14 +52,14 @@ class GameRunner
     end
 
     def set_up
-        @game = CrazyEightGame.create(player_id: @player.id)
+        @game = CrazyEightGame.create(player_id: @player.id, turn_count: 0)
         @game.new_deck
         @game.deal_start_hand(player_id: @player.id, deck_id: @game.deck_id)
         @game.place_start_card
     end
 
     def game_over?
-        @player.player_hand(@game.deck_id).length.zero?
+        @game.nil? || @player.player_hand(@game.deck_id).length.zero?
     end
 
     def play_crazy_eights
@@ -71,8 +71,10 @@ class GameRunner
             case choice
             when '1'then @game.draw_card(player_id: @player.id, deck_id: @game.deck_id)
             when '2'then rules
-            when '3'then @player.exit_game_and_delete_deck(@game)
-            else @player.play_card(@game.deck_id, choice)
+            when '3'
+                @player.exit_game_and_delete_deck(@game)
+                @game = nil
+            else @player.play_card(@game, choice)
             end
         end
     end
@@ -91,7 +93,11 @@ class GameRunner
     end
 
     def check_for_winner
-        puts 'Nice job, you won!' if @game.nil? != true && @game.remaining.positive?
+        if @game.nil? != true && @game.turn_count < 44
+            puts "Nice job, you won! It took you #{@game.turn_count} turns."
+        elsif @game.nil? != true
+            puts 'Good effort, better luck next time.'
+        end
     end
 
     def rules
