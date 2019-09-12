@@ -6,6 +6,7 @@ class GameRunner
     end
 
     def welcome
+        puts `clear`
         puts "Let's play Crazy Eights! Enter your username: "
         name = STDIN.gets.strip.downcase.capitalize
         player = Player.find_by username: name
@@ -22,10 +23,12 @@ class GameRunner
         user_is_active = true
         while user_is_active
             input = home_menu
+            puts `clear`
             if input == '1'
                 set_up
                 play_crazy_eights
                 check_for_winner
+                puts `clear`
             elsif input == '2'
                 rules
             elsif input == '3'
@@ -62,20 +65,20 @@ class GameRunner
     def play_crazy_eights
         until game_over?
             @player.view_top_card(@game.deck_id)
+            @player.view_hand(@game.deck_id)
             choice = turn_options
+            puts `clear`
             if choice == '1'
-                @player.view_hand(@game.deck_id)
-            elsif choice == '2'
                 @game.draw_card(player_id: @player.id, deck_id: @game.deck_id)
-            elsif choice == '3'
+            elsif choice == '2'
                 @player.play_card(@game.deck_id)
-            elsif choice == '4'
+            elsif choice == '3'
                 rules
-            elsif choice == '5'
+            elsif choice == '4'
                 @player.exit_game_and_delete_deck(@game)
             else
                 puts "Hmm, I'm getting mixed signals. Can you try making a "
-                puts 'selection again? Just enter 1, 2, 3, 4 or 5 please.'
+                puts 'selection again? Just enter 1, 2, 3 or 4 please.'
             end
         end
     end
@@ -84,11 +87,10 @@ class GameRunner
         puts
         puts 'What would you like to do?'
         puts
-        puts "To view your hand, [enter] '1'"
-        puts "To draw a card, [enter] '2'"
-        puts "To play a card, [enter] '3'"
-        puts "To review the rules, [enter] '4'"
-        puts "To exit and end this game, [enter] '5'"
+        puts "To draw a card, [enter] '1'"
+        puts "To play a card, [enter] '2'"
+        puts "To review the rules, [enter] '3'"
+        puts "To exit and end this game, [enter] '4'"
         puts
         choice = STDIN.gets.strip
         choice
