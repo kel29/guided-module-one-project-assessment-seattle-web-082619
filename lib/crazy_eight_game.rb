@@ -28,18 +28,14 @@ class CrazyEightGame < ActiveRecord::Base
     end
 
     def draw_card(location)
-        if remaining.zero?
-            puts 'There are no more cards to draw.'
-            puts 'Cats game, everyone loses.'
-        else
-            hash = draw_from_api(1)[0]
-            card = Hand.create(location: location, deck_id: deck_id, suit: hash['suit'], value: hash['value'], code: hash['code'])
-            if location != 'computer'
-                puts "You drew a #{hash['value'].downcase} of #{pretty_suits(hash['suit'])}. Its play code is #{hash['code'].cyan}."
-                puts "There are #{remaining} cards left in the deck."
-            end
-            card
+        hash = draw_from_api(1)[0]
+        card = Hand.create(location: location, deck_id: deck_id, suit: hash['suit'], value: hash['value'], code: hash['code'])
+        if location != 'computer'
+            puts "You drew a #{hash['value'].downcase} of #{pretty_suits(hash['suit'])}. Its play code is #{hash['code'].cyan}."
+            puts "There are #{remaining} cards left in the deck."
         end
+        puts 'There are no more cards to draw. Cats game, everyone loses.'.red if remaining.zero?
+        card
     end
 
     def turn_tracker
@@ -140,8 +136,7 @@ class CrazyEightGame < ActiveRecord::Base
         top = find_top_card
         played = false
         if player_hand('computer').nil?
-            puts 'Womp womp, the computer played all of its cards. You Lose.'.red
-            puts "😮😕🙁😦😧😢😭😭😭"
+            
         else
             player_hand('computer').each do |i|
                 if i['value'] == top['value'] || i['suit'] == top['suit']
@@ -149,7 +144,7 @@ class CrazyEightGame < ActiveRecord::Base
                     i['location'] = 'top'
                     i.save
                     played = true
-                    puts "The computer played the #{i['value']} of #{pretty_suits(i['suit'])}."
+                    puts "The computer played the #{i['value'].downcase} of #{pretty_suits(i['suit'])}."
                     break
                 end
             end
@@ -160,7 +155,7 @@ class CrazyEightGame < ActiveRecord::Base
                     card['location'] = 'top'
                     card.save
                     played = true
-                    puts "The computer played the #{card['value']} of #{pretty_suits(card['suit'])}."
+                    puts "The computer played the #{card['value'].downcase} of #{pretty_suits(card['suit'])}."
                 end
             end
             turn_tracker

@@ -28,7 +28,7 @@ class GameRunner
             when '1'
                 set_up
                 play_crazy_eights
-                puts `clear`
+                # puts `clear`
                 check_for_winner
             when '2' then rules
             when '3'
@@ -98,8 +98,11 @@ class GameRunner
     end
 
     def check_for_winner
-        if @game.nil? != true && @game.remaining.positive?
+        if @game.nil? != true && @game.remaining.positive? && @game.player_hand(@player.id).length.zero?
             puts "Nice job, you won! It took you #{@game.turn_count/2 + 1} turns."
+        elsif @game.nil? != true && @game.remaining.positive? && @game.player_hand('computer').length.zero?
+            puts 'Womp womp, the computer played all of its cards. YOU LOSE.'.red
+            puts "😕🙁😦😧😮😢😭😭😭"
         elsif @game.nil? != true
             puts 'Good effort, better luck next time.'
         end
