@@ -54,27 +54,32 @@ class GameRunner
     def set_up
         @game = CrazyEightGame.create(player_id: @player.id, turn_count: 0)
         @game.new_deck
-        @game.deal_start_hand(player_id: @player.id, deck_id: @game.deck_id)
+        @game.deal_start_hand(@player.id)
+        @game.deal_start_hand('computer')
         @game.place_start_card
     end
 
     def game_over?
-        @game.nil? || @player.player_hand(@game.deck_id).length.zero?
+        @game.nil? || @game.player_hand(@player.id).length.zero?
     end
 
     def play_crazy_eights
         until game_over?
-            @player.view_top_card(@game.deck_id)
-            @player.view_hand(@game.deck_id)
-            choice = turn_options.upcase
-            puts `clear`
-            case choice
-            when '1'then @game.draw_card(player_id: @player.id, deck_id: @game.deck_id)
-            when '2'then rules
-            when '3'
-                @player.exit_game_and_delete_deck(@game)
-                @game = nil
-            else @player.play_card(@game, choice)
+            if @game.turn_count % 2 == 1
+                @game.computer_turn
+            else
+                @game.view_top_card
+                @game.view_hand(@player.id)
+                choice = turn_options.upcase
+                puts `clear`
+                case choice
+                when '1'then @game.draw_card(@player.id)
+                when '2'then rules
+                when '3'
+                    @game.exit_game_and_delete_deck
+                    @game = nil
+                else @game.play_card(@player, choice)
+                end
             end
         end
     end
@@ -94,7 +99,7 @@ class GameRunner
 
     def check_for_winner
         if @game.nil? != true && @game.turn_count < 44
-            puts "Nice job, you won! It took you #{@game.turn_count} turns."
+            puts "Nice job, you won! It took you #{@game.turn_count/2} turns."
         elsif @game.nil? != true
             puts 'Good effort, better luck next time.'
         end
