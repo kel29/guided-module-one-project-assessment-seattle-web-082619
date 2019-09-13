@@ -28,7 +28,6 @@ class GameRunner
             when '1'
                 set_up
                 play_crazy_eights
-                # puts `clear`
                 check_for_winner
             when '2' then rules
             when '3'

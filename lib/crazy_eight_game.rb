@@ -135,31 +135,27 @@ class CrazyEightGame < ActiveRecord::Base
     def computer_turn
         top = find_top_card
         played = false
-        if player_hand('computer').nil?
-            
-        else
-            player_hand('computer').each do |i|
-                if i['value'] == top['value'] || i['suit'] == top['suit']
-                    Hand.forget_top_card(deck_id)
-                    i['location'] = 'top'
-                    i.save
-                    played = true
-                    puts "The computer played the #{i['value'].downcase} of #{pretty_suits(i['suit'])}."
-                    break
-                end
+        player_hand('computer').each do |i|
+            if i['value'] == top['value'] || i['suit'] == top['suit']
+                Hand.forget_top_card(deck_id)
+                i['location'] = 'top'
+                i.save
+                played = true
+                puts "The computer played the #{i['value'].downcase} of #{pretty_suits(i['suit'])}."
+                break
             end
-            until played == true
-                card = draw_card('computer')
-                if card['value'] == top['value'] || card['suit'] == top['suit']
-                    Hand.forget_top_card(deck_id)
-                    card['location'] = 'top'
-                    card.save
-                    played = true
-                    puts "The computer played the #{card['value'].downcase} of #{pretty_suits(card['suit'])}."
-                end
-            end
-            turn_tracker
         end
+        until played == true
+            card = draw_card('computer')
+            if card['value'] == top['value'] || card['suit'] == top['suit']
+                Hand.forget_top_card(deck_id)
+                card['location'] = 'top'
+                card.save
+                played = true
+                puts "The computer played the #{card['value'].downcase} of #{pretty_suits(card['suit'])}."
+            end
+        end
+        turn_tracker
     end
 
     def exit_game_and_delete_deck
