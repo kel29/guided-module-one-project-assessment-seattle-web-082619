@@ -99,7 +99,7 @@ class GameRunner
 
     def check_for_winner
         if @game.nil? != true && @game.turn_count < 44
-            puts "Nice job, you won! It took you #{@game.turn_count/2} turns."
+            puts "Nice job, you won! It took you #{@game.turn_count/2.ceil} turns."
         elsif @game.nil? != true
             puts 'Good effort, better luck next time.'
         end
