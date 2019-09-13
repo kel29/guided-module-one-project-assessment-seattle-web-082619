@@ -60,7 +60,7 @@ class GameRunner
     end
 
     def game_over?
-        @game.nil? || @game.player_hand(@player.id).length.zero?
+        @game.nil? || @game.remaining.zero? || @game.player_hand(@player.id).length.zero? || @game.player_hand('computer').length.zero? 
     end
 
     def play_crazy_eights
@@ -98,24 +98,26 @@ class GameRunner
     end
 
     def check_for_winner
-        if @game.nil? != true && @game.turn_count < 44
-            puts "Nice job, you won! It took you #{@game.turn_count/2.ceil} turns."
+        if @game.nil? != true && @game.remaining.positive?
+            puts "Nice job, you won! It took you #{@game.turn_count/2 + 1} turns."
         elsif @game.nil? != true
             puts 'Good effort, better luck next time.'
         end
     end
 
     def rules
-        puts 'The goal of the game is to get rid of all of your cards. Each'
-        puts 'turn you must play a card, and that card must be either the same '
-        puts 'suit or number as the card on the top of the play pile. If you '
-        puts "don't have a card in your hand that you can play, or you don't "
-        puts 'want to play any of the cards in your hand, you can draw from '
-        puts "the top of the deck. There's one exception, though! Eights are "
-        puts 'wild. That means you can play an Eight at any time, and when you '
-        puts "do, you'll have the opportunity to choose a new suit for the next"
-        puts 'card laid. You win when you run out of cards, and you lose if '
-        puts 'you get to the end of the deck without playing all of your cards.'
+        puts 'The goal of the game is to get rid of all of your cards before the'
+        puts 'computer plays everything in their hand. To end each turn, you '
+        puts 'must play a card, and that card must be either the same suit or '
+        puts "number as the card on the top of the play pile. If you don't have"
+        puts "a card in your hand that you can play, or you don't want to play "
+        puts 'any of the cards in your hand, you can draw from the top of the '
+        puts "deck. There's one exception, though! Eights are wild. That means "
+        puts "you can play an Eight at any time, and when you do, you'll have "
+        puts 'the opportunity to choose a new suit for the next card laid. You '
+        puts 'win if you play all of your cards first! You lose if the computer'
+        puts 'plays all of their cards first, or if you get to the end of the '
+        puts 'deck without anyone playing all of their cards.'
         puts
         puts 'Good luck!'
     end
