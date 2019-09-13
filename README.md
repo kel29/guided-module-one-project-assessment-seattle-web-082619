@@ -13,7 +13,6 @@ Currently there are two game versions:
 - A two player game, where the second player is a computer. This is housed in the multiplayer branch
 
 Note: _I'm definitely going to merge these later and have both options on the master. Please bare with my disorganization for now._
----
 
 ## Running the game
 
