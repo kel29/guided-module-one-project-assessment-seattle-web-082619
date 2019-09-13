@@ -150,7 +150,6 @@ class CrazyEightGame < ActiveRecord::Base
         end
         until played == true
             card = draw_card('computer')
-            binding.pry
             if card['value'] == top['value'] || card['suit'] == top['suit']
                 Hand.forget_top_card(deck_id)
                 card['location'] = 'top'
