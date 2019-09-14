@@ -27,10 +27,13 @@ class GameRunner
             case input
             when '1'
                 set_up
-                play_crazy_eights
-                check_for_winner
-            when '2' then rules
-            when '3'
+                play_crazy_eights(false)
+            when '2'
+                set_up
+                @game.deal_start_hand('computer')
+                play_crazy_eights(true)
+            when '3' then rules
+            when '4'
                 puts 'Goodbye!'
                 user_is_active = false
             else
@@ -42,9 +45,10 @@ class GameRunner
 
     def home_menu
         puts
-        puts "To start a new game, [enter] '1'"
-        puts "To view the rules, [enter] '2'"
-        puts "To exit, [enter] '3'"
+        puts "To start a single player game, [enter] '1'"
+        puts "To play against the computer, [enter] '2'"
+        puts "To view the rules, [enter] '3'"
+        puts "To exit, [enter] '4'"
         puts
         input = STDIN.gets.chomp.strip
         input
@@ -54,17 +58,16 @@ class GameRunner
         @game = CrazyEightGame.create(player_id: @player.id, turn_count: 0)
         @game.new_deck
         @game.deal_start_hand(@player.id)
-        @game.deal_start_hand('computer')
         @game.place_start_card
     end
 
-    def game_over?
-        @game.nil? || @game.remaining.zero? || @game.player_hand(@player.id).length.zero? || @game.player_hand('computer').length.zero? 
+    def game_over?(computer)
+        @game.nil? || @game.remaining.zero? || @game.player_hand(@player.id).length.zero? || computer && @game.player_hand('computer').length.zero? 
     end
 
-    def play_crazy_eights
-        until game_over?
-            if @game.turn_count % 2 == 1
+    def play_crazy_eights(computer)
+        until game_over?(computer)
+            if computer && @game.turn_count % 2 == 1 
                 @game.computer_turn
             else
                 @game.view_top_card
@@ -80,6 +83,7 @@ class GameRunner
                 end
             end
         end
+        check_for_winner(computer)
     end
 
     def turn_options
@@ -107,10 +111,14 @@ class GameRunner
         end
     end
 
-    def check_for_winner
+    def winning_turns(computer)
+        computer ? @game.turn_count/2 + 1 : @game.turn_count
+    end
+
+    def check_for_winner(computer)
         if @game.nil? != true && @game.remaining.positive? && @game.player_hand(@player.id).length.zero?
-            puts "Nice job, you won! It took you #{@game.turn_count/2 + 1} turns."
-        elsif @game.nil? != true && @game.remaining.positive? && @game.player_hand('computer').length.zero?
+            puts "Nice job, you won! It took you #{winning_turns(computer)} turns."
+        elsif @game.nil? != true && @game.remaining.positive? && computer && @game.player_hand('computer').length.zero?
             puts 'Womp womp, the computer played all of its cards. YOU LOSE.'.red
             puts "😕🙁😦😧😮😢😭😭😭"
         elsif @game.nil? != true
