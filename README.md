@@ -16,7 +16,9 @@ Note: _I'm definitely going to merge these later and have both options on the ma
 
 ## Running the game
 
-To run the game, enter into your terminal `ruby bin/run.rb`
+Run this program with Ruby 2.4.1 or higher. Once cloned onto your computer, start by running `bundle install` .
+
+To run the game, enter into your terminal `ruby bin/run.rb` .
 
 ## Rules
 
