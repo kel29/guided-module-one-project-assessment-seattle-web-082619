@@ -19,7 +19,7 @@ Game rules can be viewed anytime within the game as well, so don't worry if you 
 
 ### Game Play Baseline
 
-Each turn ends when you play a card, and the game ends when someone successfully plays all of the cards in their hand. You can only play a card if **either** its suit or number matches the last played card. There is one exception - **Eights are wild!**. An Eight can be played any time, and when you play it you will be able to change the suit in play.
+Each turn ends when you play a card, and the game ends when someone successfully plays all of the cards in their hand. You can only play a card if **either** its suit or number matches the last played card. There is one exception - **Eights are wild!** An Eight can be played any time, and when you play it, you will be able to change the suit in play.
 
 ### For single player
  
@@ -29,6 +29,6 @@ You're playing against the deck - **to win** you need to get rid of all the card
 
 ### For playing against the computer
 
-After you complete each turn, the computer will play a card. **You win** if you play all of your cards before the computer plays all of its cards. **You lose** if the computer plays all of its cards first, _or_ if you run out of cards to draw from the deck.
+After you complete each turn, the computer will play a card. **You win** if you play all of your cards before the computer plays all of its cards. **You lose** if the computer plays all of its cards first, _or_ if you run out of cards to draw from the deck. As a note, the computer will not use its Eights to change the suit of the game, and will play them the same as any other card.
 
 ![Playing against computer display](images/against_computer.png)
