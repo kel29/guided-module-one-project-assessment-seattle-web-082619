@@ -5,15 +5,6 @@ Welcome to Crazy Eights, a simple command line application that let's you play t
 
 ---
 
-## Game Versions
-
-Currently there are two game versions:
-
-- A single player game which is housed in the master branch
-- A two player game, where the second player is a computer. This is housed in the multiplayer branch
-
-Note: _I'm definitely going to merge these later and have both options on the master. Please bare with my disorganization for now._
-
 ## Running the game
 
 Run this program with Ruby 2.4.1 or higher. Once cloned onto your computer, start by running `bundle install` .
@@ -37,4 +28,4 @@ You're playing against the deck - **to win** you need to get rid of all the card
 ### For playing against the computer
 
 After you complete each turn, the computer will play a card. **You win** if you play all of your cards before the computer plays all of its cards.
-**You lose** if the computer plays all of its cards first, or if you run out of cards to draw from the deck.
+**You lose** if the computer plays all of its cards first, _or_ if you run out of cards to draw from the deck.
