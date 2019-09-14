@@ -75,8 +75,7 @@ class GameRunner
                 when '1'then @game.draw_card(@player.id)
                 when '2'then rules
                 when '3'
-                    @game.exit_game_and_delete_deck
-                    @game = nil
+                    exit_game_and_delete_deck(@game)
                 else @game.play_card(@player, choice)
                 end
             end
@@ -94,6 +93,18 @@ class GameRunner
         puts
         choice = STDIN.gets.strip
         choice
+    end
+
+    def exit_game_and_delete_deck(game)
+        puts 'Are you sure you want to exit and end this game?'
+        puts "[enter] 'yes' to confirm."
+        input = STDIN.gets.strip.downcase
+        case input
+        when 'yes'
+            Hand.where(deck_id: game.deck_id).destroy_all
+            game.destroy
+            @game = nil
+        end
     end
 
     def check_for_winner

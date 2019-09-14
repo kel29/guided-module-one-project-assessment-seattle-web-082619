@@ -158,17 +158,4 @@ class CrazyEightGame < ActiveRecord::Base
         turn_tracker
     end
 
-    
-
-    def exit_game_and_delete_deck
-        puts 'Are you sure you want to exit and end this game?'
-        puts "[enter] 'yes' to confirm."
-        input = STDIN.gets.strip.downcase
-        case input
-        when 'yes'
-            Hand.where(deck_id: deck_id).destroy_all
-            destroy
-        end
-    end
-
 end
