@@ -1,5 +1,5 @@
 Crazy Eights!
----
+==============
 
 Welcome to Crazy Eights, a simple command line application that let's you play this tried and true card game.
 
@@ -7,9 +7,11 @@ Welcome to Crazy Eights, a simple command line application that let's you play t
 
 Run this program with Ruby 2.4.1 or higher. Once cloned onto your computer, start by running `bundle install` .
 
-To run the game, enter into your terminal `ruby bin/run.rb` .
+To run the game, enter into your terminal `ruby bin/run.rb` . You will be greated with the welcome page:
 
 ![Start Screen](images/start_screen.png)
+
+From here, choose which game version you would like to play, and have fun!
 
 ## Rules
 
