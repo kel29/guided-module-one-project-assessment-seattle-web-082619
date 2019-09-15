@@ -1,7 +1,3 @@
-require 'JSON'
-require 'rest-client'
-require 'pry'
-
 class CrazyEightGame < ActiveRecord::Base
 
     def new_deck
