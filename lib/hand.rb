@@ -1,7 +1,7 @@
 class Hand < ActiveRecord::Base 
 
-    def self.forget_top_card(deck_id)
-        old = self.find_by("location = ? AND deck_id = ?", "top", deck_id)
+    def self.forget_top_card(deck_api_id)
+        old = self.find_by("location = ? AND deck_api_id = ?", "top", deck_api_id)
         old.location = "discard"
         old.save
     end

@@ -77,8 +77,7 @@ class GameRunner
                 case choice
                 when '1'then @game.draw_card(@player.id)
                 when '2'then rules
-                when '3'
-                    exit_game_and_delete_deck(@game)
+                when '3' then exit_game_and_delete_deck(@game)
                 else @game.play_card(@player, choice)
                 end
             end
@@ -105,7 +104,7 @@ class GameRunner
         input = STDIN.gets.strip.downcase
         case input
         when 'yes'
-            Hand.where(deck_id: game.deck_id).destroy_all
+            Hand.where(deck_api_id: game.deck_api_id).destroy_all
             game.destroy
             @game = nil
         end

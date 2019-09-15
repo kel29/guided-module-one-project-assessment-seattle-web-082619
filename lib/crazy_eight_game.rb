@@ -5,31 +5,31 @@ require 'pry'
 class CrazyEightGame < ActiveRecord::Base
 
     def new_deck
-        self.deck_id = JSON.parse(RestClient.get("https://deckofcardsapi.com/api/deck/new/shuffle/"))['deck_id']
+        self.deck_api_id = JSON.parse(RestClient.get("https://deckofcardsapi.com/api/deck/new/shuffle/"))['deck_id']
         update_remaining(JSON.parse(RestClient.get("https://deckofcardsapi.com/api/deck/new/shuffle/"))['remaining'])
         save
     end
 
     def draw_from_api(count)
-        response = RestClient.get("https://deckofcardsapi.com/api/deck/#{deck_id}/draw/?count=#{count}")
+        response = RestClient.get("https://deckofcardsapi.com/api/deck/#{deck_api_id}/draw/?count=#{count}")
         update_remaining(JSON.parse(response)['remaining'])
         JSON.parse(response)['cards']
     end
 
     def deal_start_hand(player)
         draw_from_api(7).each do |c| 
-            Hand.create(location: player, deck_id: deck_id, suit: c['suit'], value: c['value'], code: c['code'])
+            Hand.create(location: player, deck_api_id: deck_api_id, suit: c['suit'], value: c['value'], code: c['code'])
         end
     end
 
     def place_start_card
         card_hash = draw_from_api(1)[0]
-        Hand.create(location: 'top', deck_id: deck_id, suit: card_hash['suit'], value: card_hash['value'], code: card_hash['code'])
+        Hand.create(location: 'top', deck_api_id: deck_api_id, suit: card_hash['suit'], value: card_hash['value'], code: card_hash['code'])
     end
 
     def draw_card(location)
         hash = draw_from_api(1)[0]
-        card = Hand.create(location: location, deck_id: deck_id, suit: hash['suit'], value: hash['value'], code: hash['code'])
+        card = Hand.create(location: location, deck_api_id: deck_api_id, suit: hash['suit'], value: hash['value'], code: hash['code'])
         if location != 'computer'
             puts "You drew a #{hash['value'].downcase} of #{pretty_suits(hash['suit'])}. Its play code is #{hash['code'].cyan}."
             puts "There are #{remaining} cards left in the deck."
@@ -49,7 +49,7 @@ class CrazyEightGame < ActiveRecord::Base
     end
 
     def find_top_card
-        Hand.where('location = ? AND deck_id = ?', 'top', deck_id)[0]
+        Hand.where('location = ? AND deck_api_id = ?', 'top', deck_api_id)[0]
     end
 
     def view_top_card
@@ -75,7 +75,7 @@ class CrazyEightGame < ActiveRecord::Base
     end
 
     def player_hand(player)
-        Hand.where('location = ? AND deck_id = ?', player, deck_id).order(:suit, :value)
+        Hand.where('location = ? AND deck_api_id = ?', player, deck_api_id).order(:suit, :value)
     end
 
     def view_hand(player)
@@ -100,8 +100,8 @@ class CrazyEightGame < ActiveRecord::Base
             view_hand(player)
             suit = eights_are_wild
             move_card_from_hand_to_pile(player, card_code)
-            Hand.forget_top_card(deck_id)
-            Hand.create(location: 'top', deck_id: deck_id, suit: suit)
+            Hand.forget_top_card(deck_api_id)
+            Hand.create(location: 'top', deck_api_id: deck_api_id, suit: suit)
             turn_tracker
         elsif top.suit == play_card.suit || top.value == play_card.value
             move_card_from_hand_to_pile(player, card_code)
@@ -126,7 +126,7 @@ class CrazyEightGame < ActiveRecord::Base
     end
 
     def move_card_from_hand_to_pile(player, card_code)
-        Hand.forget_top_card(deck_id)
+        Hand.forget_top_card(deck_api_id)
         new_top = find_card_in_hand(player, card_code)
         new_top[:location] = 'top'
         new_top.save
@@ -137,7 +137,7 @@ class CrazyEightGame < ActiveRecord::Base
         played = false
         player_hand('computer').each do |i|
             if i['value'] == top['value'] || i['suit'] == top['suit']
-                Hand.forget_top_card(deck_id)
+                Hand.forget_top_card(deck_api_id)
                 i['location'] = 'top'
                 i.save
                 played = true
@@ -148,7 +148,7 @@ class CrazyEightGame < ActiveRecord::Base
         until played == true
             card = draw_card('computer')
             if card['value'] == top['value'] || card['suit'] == top['suit']
-                Hand.forget_top_card(deck_id)
+                Hand.forget_top_card(deck_api_id)
                 card['location'] = 'top'
                 card.save
                 played = true

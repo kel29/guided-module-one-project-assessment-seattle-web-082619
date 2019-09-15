@@ -7,6 +7,3 @@ require 'colorize'
 game = GameRunner.new
 game.welcome
 game.game_options
-
-# Pry.start
-
