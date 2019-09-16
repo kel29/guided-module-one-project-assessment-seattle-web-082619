@@ -56,7 +56,15 @@ class GameRunner
     end
 
     def game_over?(computer)
-        @game.nil? || @game.remaining.zero? || @game.player_hand(@player.id).length.zero? || computer && @game.player_hand('computer').length.zero? 
+        @game.nil? || @game.remaining.zero? || player_out_of_cards? || computer_out_of_cards?(computer)
+    end
+
+    def player_out_of_cards?
+        @game.player_hand(@player.id).length.zero?
+    end
+
+    def computer_out_of_cards?(computer)
+        computer && @game.player_hand('computer').length.zero?
     end
 
     def play_crazy_eights(computer)
