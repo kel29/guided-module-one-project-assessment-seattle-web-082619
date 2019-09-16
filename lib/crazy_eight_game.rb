@@ -1,40 +1,61 @@
 class CrazyEightGame < ActiveRecord::Base
 
     def new_deck
-        self.deck_api_id = JSON.parse(RestClient.get("https://deckofcardsapi.com/api/deck/new/shuffle/"))['deck_id']
-        update_remaining(JSON.parse(RestClient.get("https://deckofcardsapi.com/api/deck/new/shuffle/"))['remaining'])
+        deck_info = JSON.parse(RestClient.get("https://deckofcardsapi.com/api/deck/new/shuffle/"))
+        self.deck_api_id = deck_info['deck_id']
+        update_remaining(deck_info['remaining'])
         save
     end
 
     def draw_from_api(count)
-        response = RestClient.get("https://deckofcardsapi.com/api/deck/#{deck_api_id}/draw/?count=#{count}")
-        update_remaining(JSON.parse(response)['remaining'])
-        JSON.parse(response)['cards']
+        deck_info = JSON.parse(RestClient.get("https://deckofcardsapi.com/api/deck/#{deck_api_id}/draw/?count=#{count}"))
+        update_remaining(deck_info['remaining'])
+        deck_info['cards']
     end
 
     def deal_start_hand(player)
-        draw_from_api(7).each do |c| 
-            Hand.create(location: player, deck_api_id: deck_api_id, suit: c['suit'], value: c['value'], code: c['code'])
+        draw_from_api(7).each do |card| 
+            Hand.create(
+                location: player,
+                deck_api_id: deck_api_id,
+                suit: card['suit'],
+                value: card['value'],
+                code: card['code']
+            )
         end
     end
 
     def place_start_card
-        card_hash = draw_from_api(1)[0]
-        Hand.create(location: 'top', deck_api_id: deck_api_id, suit: card_hash['suit'], value: card_hash['value'], code: card_hash['code'])
+        card_info = draw_from_api(1)[0]
+        Hand.create(
+            location: 'top',
+            deck_api_id: deck_api_id,
+            suit: card_info['suit'],
+            value: card_info['value'],
+            code: card_info['code']
+        )
     end
 
     def draw_card(location)
-        hash = draw_from_api(1)[0]
-        card = Hand.create(location: location, deck_api_id: deck_api_id, suit: hash['suit'], value: hash['value'], code: hash['code'])
-        if location != 'computer'
-            puts "You drew a #{hash['value'].downcase} of #{pretty_suits(hash['suit'])}. Its play code is #{hash['code'].cyan}."
-            puts "There are #{remaining} cards left in the deck."
-        end
+        card_info = draw_from_api(1)[0]
+        card = Hand.create(
+            location: location,
+            deck_api_id: deck_api_id,
+            suit: card_info['suit'],
+            value: card_info['value'],
+            code: card_info['code']
+        )
+        display_drawn_card(card_info) unless location == 'computer'
         puts 'There are no more cards to draw. Cats game, everyone loses.'.red if remaining.zero?
         card
     end
 
-    def turn_tracker
+    def display_drawn_card(card)
+        puts "You drew a #{card['value'].downcase} of #{pretty_suits(card['suit'])}. Its play code is #{card['code'].cyan}."
+        puts "There are #{remaining} cards left in the deck."
+    end
+
+    def increment_turn_count
         self.turn_count += 1
         save
     end
@@ -49,14 +70,14 @@ class CrazyEightGame < ActiveRecord::Base
     end
 
     def view_top_card
-        card = find_top_card
-        suit = pretty_suits(card['suit'])
-        if card.value.nil?
+        top_card = find_top_card
+        suit = pretty_suits(top_card['suit'])
+        if top_card.value.nil?
             puts
             puts "A crazy eight was played! The suit in play is now #{suit}."
         else
             puts
-            puts "The top card is currently the #{card['value'].downcase} of #{suit}. "
+            puts "The top card is currently the #{top_card['value'].downcase} of #{suit}. "
         end
     end
 
@@ -75,19 +96,20 @@ class CrazyEightGame < ActiveRecord::Base
     end
 
     def view_hand(player)
+        players_hand = player_hand(player)
         puts
-        puts "You have #{player_hand(player).length} card(s) in your hand: "
-        player_hand(player).each do |i| 
-            puts "* #{i['value'].downcase} of #{pretty_suits(i['suit'])}; play code: #{i['code'].cyan}"
+        puts "You have #{players_hand.length} card(s) in your hand: "
+        players_hand.each do |card| 
+            puts "* #{card['value'].downcase} of #{pretty_suits(card['suit'])}; play code: #{card['code'].cyan}"
         end
     end
 
     def find_card_in_hand(player, card_code)
-        player_hand(player).find { |c| c.code == card_code }
+        player_hand(player).find { |card| card.code == card_code }
     end
 
     def play_card(player, card_code)
-        top = find_top_card
+        top_card = find_top_card
         play_card = find_card_in_hand(player, card_code)
         if play_card.nil?
             puts 'Looks like you are trying to play a card, except what you entered '
@@ -98,10 +120,10 @@ class CrazyEightGame < ActiveRecord::Base
             move_card_from_hand_to_pile(player, card_code)
             Hand.forget_top_card(deck_api_id)
             Hand.create(location: 'top', deck_api_id: deck_api_id, suit: suit)
-            turn_tracker
-        elsif top.suit == play_card.suit || top.value == play_card.value
+            increment_turn_count
+        elsif top_card.suit == play_card.suit || top_card.value == play_card.value
             move_card_from_hand_to_pile(player, card_code)
-            turn_tracker
+            increment_turn_count
         else
             puts "Looks like that's not a valid card to play. Remember that either the card "
             puts "number or suit needs to match the card on the top of the discard pile."
@@ -131,17 +153,17 @@ class CrazyEightGame < ActiveRecord::Base
     def computer_turn
         top = find_top_card
         played = false
-        player_hand('computer').each do |i|
-            if i['value'] == top['value'] || i['suit'] == top['suit']
+        player_hand('computer').each do |card|
+            if card['value'] == top['value'] || card['suit'] == top['suit']
                 Hand.forget_top_card(deck_api_id)
-                i['location'] = 'top'
-                i.save
+                card['location'] = 'top'
+                card.save
                 played = true
-                puts "The computer played the #{i['value'].downcase} of #{pretty_suits(i['suit'])}."
+                puts "The computer played the #{card['value'].downcase} of #{pretty_suits(card['suit'])}."
                 break
             end
         end
-        until played == true
+        until played
             card = draw_card('computer')
             if card['value'] == top['value'] || card['suit'] == top['suit']
                 Hand.forget_top_card(deck_api_id)
@@ -151,7 +173,10 @@ class CrazyEightGame < ActiveRecord::Base
                 puts "The computer played the #{card['value'].downcase} of #{pretty_suits(card['suit'])}."
             end
         end
-        turn_tracker
+        increment_turn_count
+    end
+
+    def computer_checks_if_they_can_play
     end
 
 end

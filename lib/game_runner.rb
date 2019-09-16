@@ -1,10 +1,5 @@
 class GameRunner
 
-    def initialize
-        @player = nil
-        @game = nil
-    end
-
     def welcome
         puts `clear`
         puts "Let's play Crazy Eights! Enter your username: "
@@ -22,14 +17,15 @@ class GameRunner
     def game_options
         user_is_active = true
         while user_is_active
-            input = home_menu
+            home_menu
+            input = STDIN.gets.chomp.strip
             puts `clear`
             case input
             when '1'
-                set_up
+                set_up_new_game
                 play_crazy_eights(false)
             when '2'
-                set_up
+                set_up_new_game
                 @game.deal_start_hand('computer')
                 play_crazy_eights(true)
             when '3' then rules
@@ -50,11 +46,9 @@ class GameRunner
         puts "To view the rules, [enter] '3'"
         puts "To exit, [enter] '4'"
         puts
-        input = STDIN.gets.chomp.strip
-        input
     end
 
-    def set_up
+    def set_up_new_game
         @game = CrazyEightGame.create(player_id: @player.id, turn_count: 0)
         @game.new_deck
         @game.deal_start_hand(@player.id)
@@ -72,11 +66,12 @@ class GameRunner
             else
                 @game.view_top_card
                 @game.view_hand(@player.id)
-                choice = turn_options.upcase
+                display_turn_options
+                choice = STDIN.gets.strip.upcase
                 puts `clear`
                 case choice
-                when '1'then @game.draw_card(@player.id)
-                when '2'then rules
+                when '1' then @game.draw_card(@player.id)
+                when '2' then rules
                 when '3' then exit_game_and_delete_deck(@game)
                 else @game.play_card(@player, choice)
                 end
@@ -85,7 +80,7 @@ class GameRunner
         check_for_winner(computer)
     end
 
-    def turn_options
+    def display_turn_options
         puts
         puts 'What would you like to do?'
         puts
@@ -94,8 +89,6 @@ class GameRunner
         puts "To review the rules, [enter] '2'"
         puts "To exit and end this game, [enter] '3'"
         puts
-        choice = STDIN.gets.strip
-        choice
     end
 
     def exit_game_and_delete_deck(game)
@@ -111,12 +104,12 @@ class GameRunner
     end
 
     def winning_turns(computer)
-        computer ? @game.turn_count/2 + 1 : @game.turn_count
+        computer ? @game.turn_count / 2 + 1 : @game.turn_count
     end
 
     def check_for_winner(computer)
         if @game.nil? != true && @game.remaining.positive? && @game.player_hand(@player.id).length.zero?
-            puts "Nice job, you won! It took you #{winning_turns(computer)} turns."
+            puts "Nice job, you won! It took you #{winning_turns(computer)} turns.".green
         elsif @game.nil? != true && @game.remaining.positive? && computer && @game.player_hand('computer').length.zero?
             puts 'Womp womp, the computer played all of its cards. YOU LOSE.'.red
             puts "😕🙁😦😧😮😢😭😭😭"
@@ -126,18 +119,20 @@ class GameRunner
     end
 
     def rules
-        puts 'The goal of the game is to get rid of all of your cards before the'
-        puts 'computer plays everything in their hand. To end each turn, you '
-        puts 'must play a card, and that card must be either the same suit or '
-        puts "number as the card on the top of the play pile. If you don't have"
-        puts "a card in your hand that you can play, or you don't want to play "
-        puts 'any of the cards in your hand, you can draw from the top of the '
-        puts "deck. There's one exception, though! Eights are wild. That means "
-        puts "you can play an Eight at any time, and when you do, you'll have "
-        puts 'the opportunity to choose a new suit for the next card laid. You '
-        puts 'win if you play all of your cards first! You lose if the computer'
-        puts 'plays all of their cards first, or if you get to the end of the '
-        puts 'deck without anyone playing all of their cards.'
+        puts 'The goal of the game is to get rid of all of your cards! If you '
+        puts 'are playing in the single player mode, you must do this before '
+        puts 'you reach the end of the deck, while when playing the computer '
+        puts 'you want to get rid of all of your cards before both the end of '
+        puts 'the deck and before computer plays everything in their hand. To '
+        puts 'end each turn, you must play a card, and that card must be either'
+        puts 'the same suit or number as the card on the top of the play pile.'
+        puts "If you don't have a card in your hand that you can play, or you "
+        puts "don't want to play any of the cards in your hand, you can draw "
+        puts "from the top of the deck. There's one exception, though! Eights "
+        puts 'are wild. That means you can play an Eight at any time, and when '
+        puts "you do, you'll have the opportunity to choose a new suit for the "
+        puts 'next card laid. You win if you play all of your cards (or are the'
+        puts 'first to do so when playing against the computer)!'
         puts
         puts 'Good luck!'
     end
