@@ -151,17 +151,17 @@ class CrazyEightGame < ActiveRecord::Base
     end
 
     def computer_turn
-        top = find_top_card
+        top_card = find_top_card
         played = false
         player_hand('computer').each do |card|
-            if card['value'] == top['value'] || card['suit'] == top['suit']
+            if card['value'] == top_card['value'] || card['suit'] == top_card['suit']
                 played = computer_plays_card(card)
                 break
             end
         end
         until played
             card = draw_card('computer')
-            if card['value'] == top['value'] || card['suit'] == top['suit']
+            if card['value'] == top_card['value'] || card['suit'] == top_card['suit']
                 played = computer_plays_card(card)
             end
         end
