@@ -155,28 +155,25 @@ class CrazyEightGame < ActiveRecord::Base
         played = false
         player_hand('computer').each do |card|
             if card['value'] == top['value'] || card['suit'] == top['suit']
-                Hand.forget_top_card(deck_api_id)
-                card['location'] = 'top'
-                card.save
-                played = true
-                puts "The computer played the #{card['value'].downcase} of #{pretty_suits(card['suit'])}."
+                played = computer_plays_card(card)
                 break
             end
         end
         until played
             card = draw_card('computer')
             if card['value'] == top['value'] || card['suit'] == top['suit']
-                Hand.forget_top_card(deck_api_id)
-                card['location'] = 'top'
-                card.save
-                played = true
-                puts "The computer played the #{card['value'].downcase} of #{pretty_suits(card['suit'])}."
+                played = computer_plays_card(card)
             end
         end
         increment_turn_count
     end
 
-    def computer_checks_if_they_can_play
+    def computer_plays_card(card)
+        Hand.forget_top_card(deck_api_id)
+        card['location'] = 'top'
+        card.save
+        puts "The computer played the #{card['value'].downcase} of #{pretty_suits(card['suit'])}."
+        true
     end
 
 end
