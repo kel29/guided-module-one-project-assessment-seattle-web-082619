@@ -4,7 +4,7 @@ class GameRunner
         puts `clear`
         puts "Let's play Crazy Eights! Enter your username: "
         name = STDIN.gets.strip.downcase.capitalize
-        player = Player.find_by username: name
+        player = Player.find_by(username: name)
         if player.nil?
             @player = Player.create(username: name)
             puts "Welcome, new player #{name}!"
@@ -116,9 +116,9 @@ class GameRunner
     end
 
     def check_for_winner(computer)
-        if @game.nil? != true && @game.remaining.positive? && @game.player_hand(@player.id).length.zero?
+        if @game.nil? != true && @game.remaining.positive? && player_out_of_cards?
             puts "Nice job, you won! It took you #{winning_turns(computer)} turns.".green
-        elsif @game.nil? != true && @game.remaining.positive? && computer && @game.player_hand('computer').length.zero?
+        elsif @game.nil? != true && @game.remaining.positive? && computer_out_of_cards?(computer)
             puts 'Womp womp, the computer played all of its cards. YOU LOSE.'.red
             puts "😕🙁😦😧😮😢😭😭😭"
         elsif @game.nil? != true
